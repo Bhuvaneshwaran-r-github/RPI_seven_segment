@@ -30,7 +30,7 @@ A Linux kernel character device driver for Raspberry Pi 3B+ to control a 4-digit
 make
 
 # Load the module
-sudo insmod file1.ko
+sudo insmod seven_segment_driver_v1.ko
 
 # Create device node (if not auto-created)
 sudo mknod /dev/ext_device c <major> 0
@@ -42,10 +42,10 @@ sudo mknod /dev/ext_device c <major> 0
 
 ```bash
 # Compile the user application
-gcc -o app1 app1.c
+gcc -o display_number_int display_number_int.c
 
 # Run the application
-./app1
+./display_number_int
 ```
 
 ### Display Commands
@@ -57,8 +57,8 @@ gcc -o app1 app1.c
 
 | File | Description |
 |------|-------------|
-| `file1.c`, `file2.c`, `file3.c` | Kernel module driver implementations |
-| `app1.c`, `app2.c`, `app3.c` | User-space applications |
+| `seven_segment_driver_v1.c` | Kernel module driver (int array method) |
+| `display_number_int.c` | User-space application for number display |
 | `Makefile` | Build configuration |
 
 ## How It Works
