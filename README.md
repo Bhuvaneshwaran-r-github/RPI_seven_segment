@@ -49,9 +49,9 @@ Device drivers are the bridge between hardware and software. This type of driver
     │   │         Character Device Driver              │  │
     │   │     (seven_segment_driver_v1.c)              │  │
     │   │                                              │  │
-    │   │  ┌─────────┐  ┌─────────┐  ┌─────────┐      │  │
-    │   │  │ ext_open│  │ext_write│  │ext_read │      │  │
-    │   │  └─────────┘  └─────────┘  └─────────┘      │  │
+    │   │  ┌─────────┐  ┌─────────┐  ┌─────────┐       │  │
+    │   │  │ ext_open│  │ext_write│  │ext_read │       │  │
+    │   │  └─────────┘  └─────────┘  └─────────┘       │  │
     │   └──────────────────┬───────────────────────────┘  │
     │                      │                              │
     │   ┌──────────────────┴───────────────────────────┐  │
