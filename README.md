@@ -1,73 +1,123 @@
-# RPI Seven Segment Display Driver
+# 🔢 Seven Segment Display Driver for Raspberry Pi
 
-A Linux kernel character device driver for Raspberry Pi 3B+ to control a 4-digit 7-segment display via GPIO pins.
+A **Linux kernel character device driver** for Raspberry Pi that controls a 4-digit 7-segment display through GPIO pins.
 
-## Features
+---
 
-- Custom Linux kernel module with file operations (open, read, write, release)
-- Controls 12 GPIO pins for multiplexed 7-segment display
-- User-space applications for interactive number display
-- Supports display range 0-9999 with error and off states
-- Time-multiplexed digit scanning for smooth display
+## 📋 Project Description
 
-## Hardware Requirements
+This project implements a **custom Linux kernel module** that creates a character device for controlling a 7-segment display. It demonstrates deep understanding of Linux kernel programming, device drivers, and hardware interfacing.
 
-- Raspberry Pi 3B+
-- 4-digit 7-segment display (common cathode)
-- Current limiting resistors
-- Connecting wires
+### What I Built:
+- **Kernel Module**: Loadable kernel module (LKM) with file operations
+- **Character Device**: `/dev/ext_device` for user-space communication
+- **GPIO Control**: Direct hardware access for 12 GPIO pins
+- **User Applications**: Multiple test applications for different display modes
 
-## Software Prerequisites
+### Real-World Application:
+Device drivers are the bridge between hardware and software. This type of driver is used in industrial displays, point-of-sale terminals, embedded HMIs, and IoT devices. Understanding kernel programming is essential for embedded Linux roles.
 
-- Raspberry Pi OS (Linux kernel headers required)
-- GCC compiler
-- Make utility
+---
 
-## Building the Driver
+## 🛠️ Technologies Used
 
-```bash
-# Build the kernel module
-make
+| Category | Technology |
+|----------|------------|
+| **Platform** | Raspberry Pi 3B+ |
+| **Kernel** | Linux (Raspbian) |
+| **Language** | C (Kernel & User space) |
+| **API** | Linux GPIO Subsystem |
+| **Driver Type** | Character Device Driver |
+| **Build System** | Kbuild / Makefile |
+| **Hardware** | 4-digit 7-segment display (Common Cathode) |
 
-# Load the module
-sudo insmod seven_segment_driver_v1.ko
+---
 
-# Create device node (if not auto-created)
-sudo mknod /dev/ext_device c <major> 0
+## 📊 System Architecture
+
+```
+    ┌─────────────────────────────────────────────────────┐
+    │                   USER SPACE                        │
+    │   ┌──────────────────────────────────────────────┐  │
+    │   │         User Application (display_*.c)       │  │
+    │   │              open() / write() / read()       │  │
+    │   └──────────────────┬───────────────────────────┘  │
+    ├──────────────────────┼──────────────────────────────┤
+    │                      │ /dev/ext_device              │
+    │                   KERNEL SPACE                      │
+    │   ┌──────────────────┴───────────────────────────┐  │
+    │   │         Character Device Driver              │  │
+    │   │     (seven_segment_driver_v1.c)              │  │
+    │   │                                              │  │
+    │   │  ┌─────────┐  ┌─────────┐  ┌─────────┐      │  │
+    │   │  │ ext_open│  │ext_write│  │ext_read │      │  │
+    │   │  └─────────┘  └─────────┘  └─────────┘      │  │
+    │   └──────────────────┬───────────────────────────┘  │
+    │                      │                              │
+    │   ┌──────────────────┴───────────────────────────┐  │
+    │   │            Linux GPIO Subsystem              │  │
+    │   │         gpio_set_value() / gpio_get_value()  │  │
+    │   └──────────────────┬───────────────────────────┘  │
+    └──────────────────────┼──────────────────────────────┘
+                           │
+    ┌──────────────────────┴───────────────────────────────┐
+    │                    HARDWARE                          │
+    │     GPIO 16-27  →  7-Segment Display (4 digits)      │
+    └──────────────────────────────────────────────────────┘
 ```
 
-## Usage
+---
 
-### Running the Application
+## 🔑 Key Skills Demonstrated
 
-```bash
-# Compile the user application
-gcc -o display_number_int display_number_int.c
+### Linux Kernel Programming
+- Kernel module initialization (`module_init`, `module_exit`)
+- Character device registration (`alloc_chrdev_region`, `cdev_add`)
+- Device class and node creation (`class_create`, `device_create`)
+- Kernel memory management
+- `printk` logging and debugging
 
-# Run the application
-./display_number_int
-```
+### Device Driver Development
+- File operations implementation (`open`, `release`, `read`, `write`)
+- User-kernel data transfer (`copy_to_user`, `copy_from_user`)
+- Error handling with goto-based cleanup
+- Proper resource deallocation on exit
 
-### Display Commands
+### GPIO Subsystem
+- GPIO validation and request (`gpio_is_valid`, `gpio_request`)
+- Direction configuration (`gpio_direction_output`)
+- Value manipulation (`gpio_set_value`, `gpio_get_value`)
+- Sysfs export for user-space access (`gpiod_export`)
+- GPIO descriptor API usage
 
-- Enter any number (0-9999) to display on the 7-segment
-- Type `exit` to turn off display and quit
+### Hardware Interfacing
+- 7-segment display multiplexing
+- Digit encoding (a-g segments)
+- Time-division multiplexing for multi-digit display
+- Current limiting and drive considerations
 
-## File Structure
+### Build & Deployment
+- Makefile for kernel modules
+- Module loading/unloading (`insmod`, `rmmod`)
+- Kernel message inspection (`dmesg`)
+- Device node permissions
 
-| File | Description |
-|------|-------------|
-| `seven_segment_driver_v1.c` | Kernel module driver (int array method) |
-| `display_number_int.c` | User-space application for number display |
-| `Makefile` | Build configuration |
+---
 
-## How It Works
+## 📁 Project Structure
 
-1. The kernel driver creates a character device at `/dev/ext_device`
-2. User-space application opens the device and writes segment patterns
-3. Driver configures GPIO pins and outputs the patterns
-4. Time-multiplexing scans through all 4 digits rapidly to create a persistent display
+| File | Purpose |
+|------|---------|
+| `seven_segment_driver_v1.c` | Kernel module with GPIO control |
+| `display_number_int.c` | User app for number display |
+| `Makefile` | Kernel module build configuration |
 
-## Segment Mapping
+---
 
-The display uses standard 7-segment encoding (a-g segments + decimal point) with 4 digit select lines for multiplexing.
+## 🎯 What I Learned
+
+- Linux kernel internals and module development
+- Character device driver architecture
+- Safe kernel programming practices
+- Hardware abstraction in Linux
+- User-kernel space communication mechanisms
